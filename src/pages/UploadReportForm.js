@@ -36,42 +36,42 @@ function Forms() {
   };
 
   // Handle file inputs
-  const handleFileChange = async (e) => {
-    const { name, files } = e.target;
-    const file = files[0];
-    const token = localStorage.getItem("token");
-    if (file) {
-      const formData = new FormData();
-      formData.append("UploadFiles", file);
-      try {
-        const uploadResponse = await fetch(
-          "http://localhost:8080/protected/report-file-handler",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            body: formData,
+    const handleFileChange = async (e) => {
+      const { name, files } = e.target;
+      const file = files[0];
+      const token = localStorage.getItem("token");
+      if (file) {
+        const formData = new FormData();
+        formData.append("UploadFiles", file);
+        try {
+          const uploadResponse = await fetch(
+            "http://localhost:8080/protected/report-file-handler",
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              body: formData,
+            }
+          );
+
+          if (!uploadResponse.ok) {
+            throw new Error("Failed to upload file");
           }
-        );
 
-        if (!uploadResponse.ok) {
-          throw new Error("Failed to upload file");
+          const uploadData = await uploadResponse.json();
+
+          const { filename } = uploadData;
+          console.log(filename);
+          setFormData((prevData) => ({
+            ...prevData,
+            [name]: filename,
+          }));
+        } catch (error) {
+          console.log(error);
         }
-
-        const uploadData = await uploadResponse.json();
-
-        const { filename } = uploadData;
-        console.log(filename);
-        setFormData((prevData) => ({
-          ...prevData,
-          [name]: filename,
-        }));
-      } catch (error) {
-        console.log(error);
       }
-    }
-  };
+    };
 
   const handleImgFileChange = async (e) => {
     const { name, files } = e.target;

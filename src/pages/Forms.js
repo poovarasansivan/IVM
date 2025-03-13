@@ -23,8 +23,8 @@ function Forms() {
     start_date: "",
     end_date: "",
     budget_requested: "",
-    allocated_budget: "",
-    comments: "",
+    allocated_budget: "0",
+    comments: "NA",
   });
   const history = useHistory();
 
@@ -102,7 +102,7 @@ function Forms() {
             start_date: formData.start_date,
             end_date: formData.end_date,
             budget_requested: parseInt(formData.budget_requested, 10),
-            allocated_budget: parseInt(formData.allocated_budget, 10),
+            allocated_budget: parseInt(0, 10),
             comments: formData.comments,
           }),
         }
@@ -288,23 +288,6 @@ function Forms() {
               placeholder="0"
               name="budget_requested"
               value={formData.budget_requested}
-              onChange={handleChange}
-            />
-            <div className="absolute inset-y-0 flex items-center ml-3 pointer-events-none">
-              <FaMoneyBillAlt className="w-5 h-5" aria-hidden="true" />
-            </div>
-          </div>
-        </Label>
-
-        {/* Allocated Budget */}
-        <Label className="mt-4">
-          <span>Allocated Budget</span>
-          <div className="relative text-gray-500 focus-within:text-purple-600 dark:focus-within:text-purple-400">
-            <Input
-              className="block w-full pl-10 mt-1"
-              placeholder="0"
-              name="allocated_budget"
-              value={formData.allocated_budget}
               onChange={handleChange}
             />
             <div className="absolute inset-y-0 flex items-center ml-3 pointer-events-none">

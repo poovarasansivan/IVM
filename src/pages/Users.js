@@ -52,32 +52,24 @@ function FacultyRequestTable() {
   const totalResults = facultyRequests.length;
 
   const [page, setPage] = useState(1);
-
   useEffect(() => {
     setFilteredData(
-      facultyRequests.filter(
-        (request) =>
-          (request.faculty_id &&
-            request.faculty_id
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase())) ||
-          (request.faculty_name &&
-            request.faculty_name
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase())) ||
-          (request.email &&
-            request.email
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase())) ||
-          (request.experience &&
-            request.experience
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase())) ||
-          (request.role &&
-            request.role.toLowerCase().includes(searchTerm.toLowerCase()))
+      facultyRequests.filter((request) =>
+        (request.faculty_id &&
+          request.faculty_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (request.faculty_name &&
+          request.faculty_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (request.email &&
+          request.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (request.experience !== null &&
+          request.experience !== undefined &&
+          String(request.experience).toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (request.role &&
+          request.role.toLowerCase().includes(searchTerm.toLowerCase()))
       )
     );
   }, [searchTerm, facultyRequests]);
+  
 
   function openEditModal(rowData) {
     setRowDataToEdit(rowData);

@@ -20,8 +20,6 @@ import PageTitle from "../components/Typography/PageTitle";
 import { Link, useHistory } from "react-router-dom";
 import { CiCirclePlus } from "react-icons/ci";
 
-
-
 function FacultyRequestTable() {
   const [facultyRequests, setFacultyRequests] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -46,8 +44,18 @@ function FacultyRequestTable() {
             request.industry_name
               .toLowerCase()
               .includes(searchTerm.toLowerCase())) ||
-          (request.approval_status &&
-            request.approval_status.toLowerCase().includes(searchTerm.toLowerCase()))
+              (request.req_id &&
+                request.req_id
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase())) ||
+          (request.department &&
+            request.department
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase()))||
+              (request.participation_status &&
+                request.participation_status
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase()))
       )
     );
   }, [searchTerm, facultyRequests]);
@@ -65,8 +73,10 @@ function FacultyRequestTable() {
     history.push("/app/report-submission");
   };
 
-  const requesturlforadmin = "http://localhost:8080/protected/get-report-details";
-  const requesturlforfaculty = "http://localhost:8080/protected/get-myreport-details";
+  const requesturlforadmin =
+    "http://localhost:8080/protected/get-report-details";
+  const requesturlforfaculty =
+    "http://localhost:8080/protected/get-myreport-details";
 
   const fetchRequestDetails = async () => {
     try {
@@ -99,7 +109,12 @@ function FacultyRequestTable() {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
-        setFacultyRequests(data);
+        if(data.length === 0) {
+         setFacultyRequests([]);
+        }
+        else{
+          setFacultyRequests(data);
+        }
       } else {
         console.error("Failed to fetch data:", response.status);
       }
@@ -158,12 +173,14 @@ function FacultyRequestTable() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+         {role==="2" && (
           <div className="flex flex-row">
             <Button onClick={handleAddnew}>
               <CiCirclePlus size={24} className="mr-2 font-bold" />
               Add New
             </Button>
           </div>
+         )}
         </div>
         <hr className="border-t-1 w-full" />
 

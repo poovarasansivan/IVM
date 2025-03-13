@@ -19,64 +19,6 @@ import {
   Pagination,
 } from "@windmill/react-ui";
 
-const Data = [
-  {
-    sno: 1,
-    eventname: "Industrial Visit to TCS Bangalore",
-    allocatedbudget: 15000,
-    utilizedbudget: 14000,
-    status: "completed",
-    date: "Fri Feb 28 2025 10:30:00 IST+0530",
-  },
-  {
-    sno: 2,
-    eventname: "Industrial Visit to Infosys Hyderabad",
-    allocatedbudget: 20000,
-    utilizedbudget: 19000,
-    status: "completed",
-    date: "Tue Mar 05 2025 14:00:00 IST+0530",
-  },
-  {
-    sno: 3,
-    eventname: "Industrial Visit to Wipro Pune",
-    allocatedbudget: 18000,
-    utilizedbudget: 17000,
-    status: "completed",
-    date: "Wed Mar 15 2025 09:15:00 IST+0530",
-  },
-  {
-    sno: 4,
-    eventname: "Industrial Visit to HCL Noida",
-    allocatedbudget: 12000,
-    utilizedbudget: 11500,
-    status: "completed",
-    date: "Mon Mar 18 2025 13:45:00 IST+0530",
-  },
-  {
-    sno: 5,
-    eventname: "Industrial Visit to Google Hyderabad",
-    allocatedbudget: 30000,
-    utilizedbudget: 28000,
-    status: "pending",
-    date: "Thu Apr 01 2025 11:30:00 IST+0530",
-  },
-  {
-    sno: 6,
-    eventname: "Industrial Visit to Amazon Chennai",
-    allocatedbudget: 25000,
-    utilizedbudget: 20000,
-    status: "upcoming",
-    date: "Tue Apr 10 2025 10:00:00 IST+0530",
-  },
-  {
-    sno: 7,
-    eventname: "Industrial Visit to Zoho Chennai",
-    allocatedbudget: 10000,
-    utilizedbudget: 0,
-    status: "upcoming",
-    date: "Sat Apr 20 2025 16:00:00 IST+0530",
-  },
-];
 
 function FacultyDashboard() {
   const [totalapprovedreq, setTotalApprovedReq] = useState(0);
@@ -85,7 +27,7 @@ function FacultyDashboard() {
   const [pageTable1, setPageTable1] = useState(1);
   const [pending, setPendingReq] = useState(0);
   const resultsPerPage = 7;
-  const totalResults = Data.length; // Use Data's length for pagination
+  const totalResults = recentvsits.length || 0; // Use Data's length for pagination
 
   function onPageChangeTable1(p) {
     setPageTable1(p);
@@ -93,7 +35,7 @@ function FacultyDashboard() {
 
   useEffect(() => {
     setRecentVisits(
-      Data.slice((pageTable1 - 1) * resultsPerPage, pageTable1 * resultsPerPage)
+      recentvsits.slice((pageTable1 - 1) * resultsPerPage, pageTable1 * resultsPerPage)
     );
   }, [pageTable1]);
   
@@ -147,7 +89,7 @@ function FacultyDashboard() {
       );
 
       const data = await response.json();
-      console.log(data);
+  
       setTotalVisits(data.total_visit_conducted);
     } catch (error) {
       console.log(error);
@@ -201,8 +143,12 @@ function FacultyDashboard() {
       );
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+      if(data.length>0){
         setRecentVisits(data);
+      }
+      else{
+        setRecentVisits([])
+      }
       } else {
         console.error("Failed to fetch data:", response.status);
       }
@@ -210,6 +156,8 @@ function FacultyDashboard() {
       console.log(error);
     }
   };
+
+  console.log(recentvsits);
 
   return (
     <>

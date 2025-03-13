@@ -45,6 +45,10 @@ function FacultyRequestTable() {
             request.faculty_name
               .toLowerCase()
               .includes(searchTerm.toLowerCase())) ||
+              (request.req_id &&
+                request.req_id
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase())) ||
           (request.faculty_id &&
             request.faculty_id
               .toLowerCase()
@@ -88,15 +92,31 @@ function FacultyRequestTable() {
     setIsDeleteModalOpen(false);
   }
 
-  function handleUpdate() {
-    const updatedRequests = facultyRequests.map((request) =>
-      request.req_id === rowDataToEdit.req_id
-        ? { ...request, ...editedData }
-        : request
-    );
-    setFacultyRequests(updatedRequests);
-    closeEditModal();
-  }
+  const handleUpdate = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/protected/update-budget-details",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            req_id: rowDataToEdit.req_id,
+            comments: editedData.comments,
+            allocated_budget: parseInt(editedData.allocated_budget, 10),
+          }),
+        }
+      );
+      if (response.ok) {
+        console.log("Updated successfully");
+        closeEditModal();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   function handleDelete() {
     const updatedRequests = facultyRequests.filter(
@@ -114,8 +134,10 @@ function FacultyRequestTable() {
     setSearchTerm(event.target.value);
   }
 
-  const requesturlforadmin = "http://localhost:8080/protected/get-request-details";
-  const requesturlforfaculty = "http://localhost:8080/protected/get-myrequest-details";
+  const requesturlforadmin =
+    "http://localhost:8080/protected/get-request-details";
+  const requesturlforfaculty =
+    "http://localhost:8080/protected/get-myrequest-details";
 
   const fetchRequestDetails = async () => {
     try {
@@ -148,7 +170,11 @@ function FacultyRequestTable() {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
-        setFacultyRequests(data);
+        if (data.length > 0) {
+          setFacultyRequests(data);
+        } else {
+          setFacultyRequests([]);
+        }
       } else {
         console.error("Failed to fetch data:", response.status);
       }
@@ -174,7 +200,6 @@ function FacultyRequestTable() {
           },
           body: JSON.stringify({
             req_id: req_id,
-            comments: "NA",
             req_status: status,
           }),
         }
@@ -206,12 +231,14 @@ function FacultyRequestTable() {
               onChange={handleSearchTermChange}
             />
           </div>
-          <div className="flex flex-row">
-            <Button onClick={handleAddnew}>
-              <CiCirclePlus size={24} className="mr-2 font-bold" />
-              Add New
-            </Button>
-          </div>
+          {role === "2" && (
+            <div className="flex flex-row">
+              <Button onClick={handleAddnew}>
+                <CiCirclePlus size={24} className="mr-2 font-bold" />
+                Add New
+              </Button>
+            </div>
+          )}
         </div>
         <hr className="border-t-1 w-full" />
 
@@ -320,23 +347,27 @@ function FacultyRequestTable() {
           <Input
             type="text"
             name="comments"
-            value={editedData.comments || rowDataToEdit?.comments}
+            value={editedData.comments ?? rowDataToEdit?.comments ?? ""}
             onChange={(e) =>
               setEditedData({ ...editedData, comments: e.target.value })
             }
           />
+
           <Label>Allocated Budget</Label>
           <Input
             type="number"
             name="allocated_budget"
             value={
-              editedData.allocated_budget || rowDataToEdit?.allocated_budget
+              editedData.allocated_budget ??
+              rowDataToEdit?.allocated_budget ??
+              ""
             }
             onChange={(e) =>
               setEditedData({ ...editedData, allocated_budget: e.target.value })
             }
           />
         </ModalBody>
+
         <ModalFooter>
           <Button layout="link" onClick={closeEditModal}>
             Cancel

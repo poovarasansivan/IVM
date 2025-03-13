@@ -46,6 +46,22 @@ function TransportRequestTable() {
             request.facultyname
               .toLowerCase()
               .includes(searchTerm.toLowerCase())) ||
+          (request.req_id &&
+            request.req_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (request.faculty_id &&
+            request.faculty_id
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (request.src &&
+            request.src.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (request.destination &&
+            request.destination
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (request.department &&
+            request.department
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
           (request.department &&
             request.department
               .toLowerCase()
@@ -116,8 +132,11 @@ function TransportRequestTable() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
-        setFacultyRequests([...data]);
+        if (data.length > 0) {
+          setFacultyRequests(data);
+        } else {
+          setFacultyRequests([]);
+        }
       } else {
         console.error("Failed to fetch data:", response.status);
       }
@@ -176,7 +195,7 @@ function TransportRequestTable() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            req_id: req_id, 
+            req_id: req_id,
             approval_status: status,
           }),
         }
@@ -195,8 +214,6 @@ function TransportRequestTable() {
     }
   };
 
-
-  
   return (
     <>
       <PageTitle>Trasport Details </PageTitle>
@@ -210,12 +227,14 @@ function TransportRequestTable() {
               onChange={handleSearchTermChange}
             />
           </div>
-          <div className="flex flex-row">
-            <Button onClick={handleAddnew}>
-              <CiCirclePlus size={24} className="mr-2 font-bold" />
-              Add New
-            </Button>
-          </div>
+          {role === "2" && (
+            <div className="flex flex-row">
+              <Button onClick={handleAddnew}>
+                <CiCirclePlus size={24} className="mr-2 font-bold" />
+                Add New
+              </Button>
+            </div>
+          )}
         </div>
         <hr className="border-t-1 w-full" />
 

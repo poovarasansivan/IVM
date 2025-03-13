@@ -31,8 +31,12 @@ function Login() {
         localStorage.setItem("role",role);
         localStorage.setItem("department",department);
         localStorage.setItem("Name",username);
-
-        navigate.push("/app");
+        if(role==="1"){
+          navigate.push("/app/dashboard");
+        }
+        else{
+          navigate.push("/app/faculty-dashboard");
+        }
       } else {
         console.log("Failed to send email to the API.");
       }
